@@ -1,0 +1,20 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <stdio.h>
+#include <assert.h>
+void My_strcopy(char* des, char* src)
+{
+	assert(des != NULL);
+	assert(src != NULL);
+	while (*des++ = *src++)
+	{
+		;
+	}
+}
+int main()
+{
+	char src[] = "bit";
+	char des[] = "#########";
+	My_strcopy(des, src);
+	printf("%s\n", des);
+	return 0;
+}
