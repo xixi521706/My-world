@@ -1,7 +1,7 @@
 #define ROW 3
 #define COL 4
 #include <stdio.h>
-void print(int (*p)[4], int row, int col)
+void print(int (*p)[4], int row, int col)     //传参传的是地址，首元素（数组）地址，用数组指针创建
 {
 	int i = 0;
 	for (; i < row; i++)   //每一个元素（内部数组）
