@@ -1,0 +1,23 @@
+#define ROW 3
+#define COL 4
+#include <stdio.h>
+void print(int (*p)[4], int row, int col)
+{
+	int i = 0;
+	for (; i < row; i++)   //每一个元素（内部数组）
+  
+	{
+		int j = 0;
+		for (; j < col; j++)   //内部数组每一个元素
+		{
+			printf("%d ", *(*(p + i) + j));
+		}
+		printf("\n");
+	}
+}
+int main()
+{
+	int arr[ROW][COL] = { { 1, 2, 3, 4 }, { 2, 3, 4, 5 }, { 3, 4, 5, 6 } };
+	print(arr, 3, 4);   //数组看成3个元素，传参的是首元素地址
+	return 0;
+}
