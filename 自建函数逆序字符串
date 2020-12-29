@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string>
+void ret(char* p)
+{
+     int i=0;
+     int n=strlen(p)-1;
+     if(n)
+     {
+         while(i <= n)
+         {
+              char tmp;
+              tmp = *(p+n);
+              *(p+n) = *(p+i);
+              *(p+i) = tmp;
+              i++;
+              n--;
+         }
+     }
+}
+int main()
+{
+     char arr[256]={};
+     scanf("%s",arr);
+     ret(arr);
+     return 0;
+}
