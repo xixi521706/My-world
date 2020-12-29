@@ -1,0 +1,17 @@
+#include <stdio.h>         //输入N,J    输出  J+JJ+JJJ+JJJJ N个
+int main()
+{
+      int n;
+      int i;
+      int j;
+      scanf("%d%d",&n,&j);
+      int ret;
+      int sum;
+      for(i=0;i<n;i++)
+         {
+              ret = 10*ret+j;
+              sum += ret;
+         }
+      printf("%d\n",sum);
+      return 0;
+}
