@@ -1,0 +1,20 @@
+题目；汽水一块钱一瓶，两个空瓶子可以以换汽水喝，假设有n块钱可以喝多少瓶汽水
+#include <stdio.h>
+int main()
+{
+    int money=0;
+    int total=0;
+    int empty=0;
+    scanf("%d",&money);
+    total=money;
+    empty=money;
+    while(empty>1)          //空瓶子可以换汽水 每次空瓶子换的水total +=,剩下的空瓶子数量Empty=empty%2+empty/2
+    {
+        total += empty/2;
+        empty = empty%2+empty/2;
+    }
+    if (money == 0)
+		    printf("没有汽水\n");
+    printf("%d\n",total);
+    return 0;
+}
