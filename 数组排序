@@ -1,0 +1,31 @@
+//把一个数组的奇数位与偶数位交换
+#include <stdio.h>
+void print(int arr[],int n)
+{
+    for(int i=0;i<n;i++)
+        printf("%d ",arr[i]);
+    printf("\n");
+}
+void rev(int arr[],int n)
+{
+    int left=0;
+    int right=n-1;
+    while(left < right)
+    {
+        while((arr[left]%2 != 0) && left <right)    //一直寻找偶数的地址，没有就执行++
+           left++;
+        while((arr[right]%2 !=1) && left <right)    //一直寻找奇数的地址，没有就执行++
+           right--;
+        int tmp=arr[left];                          //找到后交换位置
+        arr[left] = arr[right];
+        arr[right] = tmp;
+     }
+}
+int main()
+{
+    int arr[]={1,2,3,4,5,6,7,8,9};
+    int sz=sizeof(arr)/sizeof(arr[0]);
+    rev(arr,sz);
+    print(arr,sz);
+    return 0;
+}
