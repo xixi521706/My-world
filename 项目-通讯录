@@ -1,0 +1,222 @@
+//test.c                         //do-while  测试结构
+#include "contact.h"
+int main()
+{
+	int input = 0;
+	struct contact con;
+	initcontact(&con);
+	do                                     
+	{
+		menu();
+		printf("请选择：");
+		scanf("%d", &input);
+		switch (input)
+		{
+		case add:
+			addcontact(&con);
+			break;
+		case del:
+			delcontact(&con);
+			break;
+		case find:
+			findcontact(&con);
+			break;
+		case modf:
+			modfcontact(&con);
+			break;
+		case show:
+			showcontact(&con);
+			break;
+		case sort:
+			sortcontact(&con);
+			break;
+		case exit:
+			printf("exit\n");
+			break;
+		default:
+			printf("重新选择\n");
+		}
+	} while (input);
+	return 0;
+}
+
+
+
+//contact.c                                              模块化
+#include "contact.h"
+void menu()
+{
+	printf("**********************************\n");
+	printf("*****0 exit****1 add****2 del*****\n");
+	printf("****3 find****4 modf****5 show***\n");
+	printf("*************6 sort***************\n");
+}
+void initcontact(struct contact* ps)
+{
+	memset(ps->data, 0, sizeof(ps->data));
+	ps->size = 0;
+}
+void addcontact(struct contact* ps)
+{
+	if (ps->size == MAX)
+		printf("通讯录已满，无法增加\n");
+	else
+	{
+		printf("请输入名字：");
+		scanf("%s", &(ps->data)[ps->size].name);
+		printf("请输入年龄：");
+		scanf("%d", &(ps->data)[ps->size].age);
+		printf("请输入电话：");
+		scanf("%s", &(ps->data)[ps->size].num);
+		printf("请输入性别：");
+		scanf("%s", &(ps->data)[ps->size].sex);
+		printf("请输入地址：");
+		scanf("%s", &(ps->data)[ps->size].addr);
+		ps->size++;
+	}
+}
+void showcontact(struct contact* ps)
+{
+	int i = 0;
+	printf("%-20s\t%-5s\t%-12s\t%-5s\t%-30s\n","name","age","num","sex","addr");
+	for (i = 0; i < ps->size; i++)
+	{
+		printf("%-20s\t%-5d\t%-12s\t%-5s\t%-30s\n",
+			ps->data[i].name, 
+			ps->data[i].age, 
+			ps->data[i].num, 
+			ps->data[i].sex, 
+			ps->data[i].addr);
+	}
+}
+static int find_by_name(struct contact* ps, char name[20])
+{
+	int i = 0;
+	for (i = 0; i < ps->size; i++)
+	{
+		if (strcmp(ps->data[i].name, name) == 0)
+		{
+			return i+1;
+		}
+	}
+	return 0;
+}
+void delcontact(struct contact* ps)
+{
+	char name[20];
+	printf("请输入你要删除的名字\n");
+	scanf("%s", name);
+	int pos = find_by_name(ps, name);
+	if (pos == 0)
+		printf("没有要删除的名字\n");
+	else
+	{
+		int j = 0;
+		for (j = pos; j < ps->size - 1; j++)
+		{
+			ps->data[j] = ps->data[j + 1];
+		}
+		ps->size--;
+		printf("删除成功\n");
+	}
+}
+void findcontact(struct contact* ps)
+{
+	char name[20];
+	printf("请输入查找名字\n");
+	scanf("%s", name);
+	int pos = find_by_name(ps, name);
+	if (pos == 0)
+		printf("没有要找的名字\n");
+	else
+	{
+		printf("%-20s\t%-5s\t%-12s\t%-5s\t%-30s\n", "name", "age", "num", "sex", "addr");
+		printf("%-20s\t%-5d\t%-12s\t%-5s\t%-30s\n",
+				ps->data[pos-1].name,
+				ps->data[pos-1].age,
+				ps->data[pos-1].num,
+				ps->data[pos-1].sex,
+				ps->data[pos-1].addr);
+	}
+}
+void modfcontact(struct contact* ps)
+{
+	char name[20];
+	printf("请输入要修改的名字\n");
+	scanf("%s", name);
+	int pos = find_by_name(ps, name);
+	if (pos == 0)
+		printf("没有要修改的名字\n");
+	else
+	{
+		char name1[20];
+		printf("请输入修改后的名字\n");
+		scanf("%s", name1);
+		memset(ps->data[pos-1].name, 0, sizeof(ps->data[pos-1].name));
+		strcpy(ps->data[pos-1].name, name1);
+		printf("修改成功\n");
+	}
+}
+void sortcontact(struct contact* ps)
+{
+	if (ps->size == 0)
+		printf("无法排序\n");
+	int i = 0;
+	for (i = 0; i < ps->size; i++)
+	{
+		int j = 0;
+		for (j = 0; j < ps->size - 1 - i;j++)
+		{
+			if (strcmp(ps->data[j].name, ps->data[j + 1].name) > 0)
+			{
+				struct peop na;
+				na = ps->data[j];
+				ps->data[j] = ps->data[j + 1];
+				ps->data[j + 1] = na;
+			}
+		}
+	}
+	printf("排序完成\n");
+}
+
+
+
+//contact.h                              头文件
+#define _CRT_SECURE_NO_WARNINGS 1
+#define MAX 1000
+#ifndef _contact_H_
+#define _contact_H_
+#endif
+#include <stdio.h>
+#include <string.h>
+struct peop
+{
+	char name[20];
+	int age;
+	char num[12];
+	char sex[5];
+	char addr[30];
+};
+struct contact
+{
+	struct peop data[MAX];
+	int size;
+};
+enum info
+{
+	exit,
+	add,
+	del,
+	find,
+	modf,
+	show,
+	sort
+};
+void menu();
+void initcontact(struct contact* con);
+void addcontact(struct contact* ps);
+void showcontact(struct contact* ps);
+void delcontact(struct contact* ps);
+void findcontact(struct contact*);
+void modfcontact(struct contact*);
+void sortcontact(struct contact*);
