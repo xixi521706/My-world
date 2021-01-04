@@ -1,0 +1,39 @@
+#include <stdio.h>
+char* getmem(void)
+{
+    char p[]="hello world";
+    return p;                      //返回栈空间的地址问题。p是局部变量，用完栈上数据销毁，返回地址无法访问
+void test(void)
+{
+    char* str=NULL;
+    str=getmem();
+    printf(str);          //无法访问
+}
+int main()
+{
+    test();               //没有变量
+    return 0;
+}
+
+
+
+//情况2：
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+void getmem(char* p)             //p是str的实参拷贝，传值，所以无论p如何改变与str无关
+{
+    p=(char*)malloc(100);      //动态内存开辟，没有free，函数完成后p销毁，内存空间泄露
+    strcpy(p,"hello world");
+}
+void test(void)
+{
+    char* str=NULL;
+    getmem(str);                  //str是变量传递的是实参
+    printf(str);
+}
+int main()
+{
+    test();
+    return 0;
+}
