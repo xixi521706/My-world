@@ -1,0 +1,16 @@
+#define OFFSETOF(struct_name,struct_num) (int)&(((struct_name*)0)->struct_num)    //0强制转换成结构体指针0，结构体指针指向成员，取地址强制转化int值，就是偏移量
+#include <stdio.h>
+
+struct S
+{
+    char c1;
+    int a;
+    char c2;
+};
+int main()
+{
+    printf("%d\n",OFFSETOF(struct S,c1));
+    printf("%d\n",OFFSETOF(struct S,a));
+    printf("%d\n",OFFSETOF(struct S,c2));
+    return 0;
+}
