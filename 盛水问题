@@ -1,0 +1,50 @@
+#include <stdio.h>     //时间复杂度O(n)
+
+int water(int arr[],int len)
+{
+    int r=len-1;
+    int l=0;
+    int ret=0;
+    int R=r-1;
+    int L=l+1;
+    while(L < R)                  //比较两侧移动数是否相邻，相邻则完成遍历
+    {
+       while(arr[l] > arr[r])    //两侧数值比较，从小的那侧移动
+       {
+            if(arr[r] < arr[R])    //右侧移动，相邻两个值比较，若右侧大，则ret += 差值
+            {
+                ret += arr[R]- arr[r];
+                R--;
+             }
+            else                    若右侧（相比较）左边大，则右侧边界移至左边
+            {
+                r=R;
+                R -= 1;
+                break;
+            }
+       }
+       while(arr[l] < arr[r])   ////两侧数值比较，从小的那侧移动
+       {
+            if(arr[l] > arr[L])
+             {
+                ret += arr[l]-arr[L];
+                L++;
+             }
+            else
+            {
+                l=L;
+                L++;
+                break;
+             }
+        }
+        return ret;
+}
+
+int main()
+{
+    int arr[]={1,4,7,3,9,7};
+    int len=sizeof(arr)/sizeof(arr[0]);
+    int ret=water(arr,len);
+    printf("%d\n");
+    return 0;
+}
