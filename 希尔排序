@@ -8,7 +8,7 @@ void swap(int* p,int i,int j)
 }
 void shellsort(int* p,int len)
 {
-     for(int h=4;h>0;h--)    //外层遍历，以h的变化遍历下面的数组
+     for(int h=4;h>0;h/=2)    //外层遍历，以h的变化遍历下面的数组，此处为二分数组
      {
         for(int i=h;i<len;i++)   //中间层循环，遍历从第h个元素开始往后的元素
         {
