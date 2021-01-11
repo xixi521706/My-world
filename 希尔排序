@@ -1,3 +1,5 @@
+//还有一个排序方式Knuth 排序方式h=1(最小的排序）, h=3h+1。。。效率要高于希尔排序
+
 #include <stdio.h>           //数组的遍历，循环条件内嵌套，循环变量数组元素，
 
 void swap(int* p,int i,int j)
