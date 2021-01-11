@@ -1,0 +1,30 @@
+#include <stdio.h>           //数组的遍历，循环条件内嵌套，循环变量数组元素，
+
+void swap(int* p,int i,int j)
+{
+     int tmp=p[i];
+     p[i]=p[j];
+     p[j]=tmp;
+}
+void shellsort(int* p,int len)
+{
+     for(int h=4;h>0;h--)    //外层遍历，以h的变化遍历下面的数组
+     {
+        for(int i=h;i<len;i++)   //中间层循环，遍历从第h个元素开始往后的元素
+        {
+            for(int j=1;j>=0;j-=h)    //最内层循环，遍历+h的数组元素
+            {
+                if(p[j]<p[j-h])
+                   swap(p,j,j-h);
+            }
+        }
+     }
+}
+
+int main()
+{
+    int arr[] = { 2, 5, 8, 3, 9, 7, 6, 11, 1, 15, 20, 19, 14, 12 };
+    int len=sizeof(arr)/sizeof(arr[0]);
+    shellsort(arr,len);
+    return 0;
+}
