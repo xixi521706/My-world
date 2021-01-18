@@ -1,0 +1,23 @@
+//假设有两个有序数组，A[],B[].其中A初始化元素M，B初始化元素N.假设A数组有足够的位置去合并B
+
+
+void merge(int A[],int m,int B[],int n)
+{
+    int i=m-1,j=n-1,k=m+n-1;                            //对于数组A有足够的位置，而合并后的元素可以从后往前排序
+    while(i >= 0 && j>=0)
+    {
+        A[k--] = (A[i] >= B[j] ? A[i--] : B[j--]);
+    }
+    while(i >= 0)
+        A[k--] = A[i--];
+    while(j >= 0)
+        A[k--] = B[j--];
+}
+int main()
+{
+    int A[10]={2,6,8,13,17,19};
+    int B[5]={4,15,16,23};
+    int m=6,int n=4;
+    merge(A,m,B,n);               //合并到数组A中
+    return 0;
+}
