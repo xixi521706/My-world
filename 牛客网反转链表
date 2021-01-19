@@ -1,0 +1,27 @@
+#include <stdio.h>     //无头单链表
+
+typedef struct treenode{
+    ElemType data;
+    struct treenode* next;
+}LNode;
+
+LNode* reverse(LNode* phead)
+{
+    if(!empty_linklist(phead))
+        return;
+    LNode* pre=NULL,cur=phead,nxt=NULL;           //旧链表表头前一个节点pre为空
+    while(cur)
+    {
+        nxt=cur->next;         //空指循环变量，在链表依次往后查询
+        cur->next=pre;                      //新链表下一个节点指向旧链表的前一个节点
+        pre=cur;                            //新链表指向的遍历
+        cur=nxt;               //链表遍历
+    }
+    return pre;            //返回一个新链表
+}
+int main()
+{
+    LNode* phead=(LNode*)malloc(sizeof(LNode));
+    LNode* ps=reverse(p);
+    return 0;
+}
