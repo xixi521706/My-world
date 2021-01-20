@@ -1,0 +1,48 @@
+#define MAX 20
+#include <stdio.h>
+
+typedef struct{
+    int data[MAX];
+    int size;
+}sestack;
+
+void init_sestack(sestack S)
+{
+    S.size = 0;                  //游标初始化，size = MAX，栈满
+}
+void push_stack(sestack S,int n)
+{
+    if(S.size== MAX)
+        return;
+    while(S.size < MAX)
+    {
+        S.data[S.size++]=n;
+    }
+}
+void cha_bindata(sestack s,int m,int n)
+{
+    int flag=0;
+    if(m == 0)
+        push_stack(S,0);
+    else (m < 0)
+    {
+        m=-m;
+        flag=1;
+    }
+    while(m)                      //比如十进制数1234，依次输出1，2，3，4.取余后膜
+       {
+           push_stack(S,m % n);   //栈的特性LIFO，取膜最低位先进栈。
+           m /= n;                //取余循环
+       }
+    if(flag == 1)
+       push_stack(S,flag);    
+}
+int main()
+{
+    int m,n;
+    sestack S;                    //申明一个顺序栈，并分配空间
+    scanf("%d %d",&m,&n);
+    init_sestack(S);              //初始化栈
+    cha_bindata(s,m,n);
+    return 0;
+}
