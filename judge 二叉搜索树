@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+typedef struct bintreenode{
+	int data;
+	struct bintreenode* Lchild;
+	struct bintreenode* Rchild;
+}bin_searchtree;
+
+bool is_binsearchtree(bin_searchtree* L)
+{
+	if (L != NULL)
+	{
+		if (L->Lchild->data <= L->data && L->Rchild->data >= L->data)
+		{
+			return is_binsearchtree(L->Lchild);
+			return is_binsearchtree(L->Rchild);
+		}
+		else
+			return false;
+	}
+	else
+		return true;
+}
+
+int main()
+{
+	bin_searchtree* L;
+	is_binsearchtree(L);
+	return 0;
+}
