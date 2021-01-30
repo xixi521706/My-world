@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int haxi(int arr[], int n)
+{
+	int tmp[6] = { 0 };
+	for (int i = 0; i < 9; i++)
+		++tmp[arr[i]];
+	for (int i = 1; i < 6; i++)
+		if (tmp[i] >n / 2)
+			return tmp[i];
+	return -1;
+}
+int main()
+{
+	int arr[] = { 1, 2, 3, 2, 2, 2, 5, 4, 2 };
+	int n = sizeof(arr) / sizeof(arr[0]);
+	int ret = haxi(arr, n);
+	printf("%d\n", ret);
+	return 0;
+}
