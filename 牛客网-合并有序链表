@@ -1,0 +1,49 @@
+//有序链表L1,L2 
+//  class L{
+//  public:
+//      L(int va=0)
+//      :val(va),head(new node*)
+//      {
+//           next=new node*;
+//      }
+//  private:
+//      int val;
+//      node* next;
+//      static head*
+//  };
+
+typedef struct node{
+    int val;
+    struct node* next;
+}listnode,L1,L2;
+
+listnode mergetwo(listnode L1,listnode L2)
+{
+    listnode* L3,head1 = L1,head2 = L2;
+    if(L1 == nullptr) return L2;
+    if(L2 == nullptr) return L1;
+    L3=(L1->val > L2->val ? L1 : L2);
+    head1=(L1->val > L2->val ? L1->next : L1);
+    head2=(L1->val > L2->val ? L2 : L1->next);
+    node* ta=L3;
+    while(head1 != null && head2 != null)
+    {
+         if(head1->val > head2->val){
+             ta->next=head1;
+             head1=head1->next;
+             }
+         else{
+             ta->next=head2;
+             head2=head2->next;
+             }    
+         ta=ta->next;
+    }
+    ta->next=(head == null?head2->next:head1->next;
+    return L3;
+}
+int main()
+{
+    listnode L1,L2;
+    listnode L3=mergetwo(L1,L2);
+    return 0;
+}
