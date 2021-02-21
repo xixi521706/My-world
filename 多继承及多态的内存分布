@@ -1,0 +1,179 @@
+//C++继承模型的内存布局
+
+对于多继承情况
+struct Base1 {...};
+struct Base2 {...};
+struct Derived : Base1, Base2 {...};
+有如下内存布局
+ 0x0    Base1* pb1 \  Derived::vptr   \ Derived* pd
+0xox                   Base1::data
+  .                     ...
+  .      Base2 *pb2 \   Base2::vptr 
+  .                     Base2::data
+  .                         ...
+  .                   Derived :: data  
+  .                         ...
+首先出现的是派生类Derived类的虚表指针vptr
+（这里插入一个提醒：
+一直以来vptr都被国人翻译为虚函数表指针
+但是vtbl英文原文是virtual table并非virtual function table
+为什么呢
+因为这个表不只是为了虚函数而准备的
+一切虚拟化技术都会用这个表 包括 虚继承 RTTI等
+所以当类本身与其直接间接基类内都未定义任何虚函数时也是有可能有虚表的
+典型就是当前类继承了一个虚基类..提醒结束）
+
+其次是第一直接基类的数据成员
+然后是第二直接基类的虚表指针vptr
+再次是第二直接基类的数据成员
+如果还有后继直接基类 那么依此类推
+也许有朋友会困惑为何偏移0处是Derived类的vptr
+而不是Base1的vptr
+因为非虚继承第一直接基类Base1与派生类Derived的基地址是一致的
+Derived的内存结构正是从Base1开始
+而对于
+Base1 *pb1 = new Derived;
+pb1->polymorphicFunction();
+这样的多态引用
+事实上我们也是用的Derived的虚表vtbl
+因为Derived的vtbl和Base1的vtbl已经融为一体了
+也就是说从Derived的vtbl中完全可以查到从Base1继承下来的虚函数
+以及覆盖Base1的虚函数
+而对于Base2来说
+事实上图中所示的Base2::vptr并不是指向Base2类的vtbl
+而是指向Derived类的vtbl中的一个thunk地址
+这个所谓的thunk地址又指向一段汇编码
+这段thunk汇编码负责做两件事：
+1.跳转到vtbl中正确的虚函数(也就是Derived的虚函数)地址所在的内存单元
+2.修改this指针使其指向Derived对象，并传入上一步检索到的虚函数中
+
+通过这个thunk策略
+编译器实现了C++的多态性
+举个例子
+Base2 *pb2 = new Derived;
+delete pb2;
+此时使用pb2调用虚析构函数时
+通过Base2::vptr跳转到了thunk汇编代码
+执行thunk后跳转到vtbl中Derived::~Derived()所在的槽位
+然后把当前指向Base2子对象部分的的this指针
+添加适当偏移使其指向Derived对象的内存首地址
+然后传入并调用Derived::~Derived()
+从而实现了Base2 *pb2和事实对象类Derived的动态绑定
+
+由此我们不妨思考一下为何动态绑定需要用指针或引用而不能通过实例对象来实现
+已知
+Derived d;
+Base2 b2 = d;
+这里相当于拷贝了d对象中的Base2::vptr+Base2::data到新对象中
+并且修改原先指向Dervied::vtbl的vptr，使其重新指向Bae2::vtbl
+这可区别大了
+原来使用Base2 *pb2时，Base2::vptr指针仍旧指向Dervied::vtbl中（的thunk码）
+而赋值给b2对象后，Base2::vptr指向的就是一个完全不同类的虚表Base2::vtbl了
+
+回到正题
+最后Derived类自己定义的成员会放在所有直接基类成员的后面
+但是这个说法是有待商榷的
+下面的例子会进一步说明
+
+对于虚继承+多继承的套路有些许变招
+考虑示例代码
+struct Base {...};
+struct Base1 : virtual Base {...};
+struct Base2 : virtual Base {...};
+struct Derived : Base1, Base2 {...};
+有如下内存布局
+
+此时注意到几个变化：
+
+1. 虚基类Base的内存空间位于Dervied类成员的下面
+也就是位于整个内存空间的最后
+即使它是所有类的共同祖先
+大家不妨进一步思考这样做的目的
+正常来说 非直接基类是不该出现在派生类内存中的
+但编译器正是通过这样的举措
+才得以实现虚基类在所有子子孙孙派生类都共享一个共同虚基类的语法特性
+此时不论是把这个Derived对象赋予Base1指针还是Base2指针
+他们都只需要把按照自己既定的惯例加上一个固定的偏移
+就能在对象的尾部访问到那个唯一的虚基类
+
+2.Derived的成员事实上是位于所有非虚直接基类的后面
+位于所有继承链上的虚基类的前面
+大家可以看到C++标准***会和编译器大厂设计这一套布局的良苦用心
+他们并未因为Derived::vptr在Base1的子对象域中而就盲目地把Derived::data也挪过去
+而是把data放在了所有非虚直接基类的后面
+这样就保证了其每个非虚直接基类的完整性和模块化
+并且方便在动态绑定时计算指针偏移
+例如
+struct Derived: Base1,Base2,...,BaseN {...}
+BaseN *pbn = new Derived;
+此时只需要令
+this+=sizeof(Base1+Base2+...+Base[N-1])即可指向BaseN的起始位置
+非常方便 当然this是个Derived * const类型 所以不能被修改
+这里只是意会转为汇编后的寄存器操作
+
+3.有一个需要特别注意的地方
+就是如果继承链上的某个类既没有虚指针也没有数据成员
+也就是说它没有内存分配
+这个时候就要小心了
+其指针将指向Derived对象的首地址！
+也就是该类的指针将会与pb1、pd存储同样的地址
+这样做的原因就是避免它指向位于其指定内存区域下方的
+一个与他无关的对象的首地址
+
+-----------------------------------------------------
+这里扩展讲解 thunk技术
+在动态绑定也就是多态的实现中thunk技术发挥了至关重要的作用
+但是thunk并不适用于所有虚函数
+让我们考虑如下代码
+struct Base1 {
+    virtual ~Base1() {}
+    virtual void v1() {}
+    virtual void v() {}
+};
+struct Base2 {
+    virtual ~Base2() {}
+    virtual void v2() {}
+    virtual void v3() {}
+    virtual void v() {}
+};
+struct Derived : Base1, Base2 {
+    ~Derived() override {}
+    void v3() override {}
+    void v() override {}
+};
+
+所得到的Derived类的vtbl如下
+
+此例中的成员函数全是虚函数
+并且各种覆盖和继承方式都有
+简直是虚函数的饕餮大餐
+我们说一下Derived类的vtbl布局以及其构造过程
+1.虚表中首先出现的是第一直接基类的Base1::vtbl
+编译器会先把Base1的虚函数指针按声明顺序写在对应偏移的槽位上
+2.替换Base1中相应被覆盖的虚函数为Derived类中的虚函数
+3.而派生类除了覆盖了第一直接基类的虚函数外 还覆盖了后继直接基类的
+于是将后继直接基类被覆盖的虚函数补到第一直接基类虚函数区域的后面
+所以大家会在后面看到覆盖了Base2的Derived::v3()
+4.接着添上了Derived类的type_info类对象的地址
+这个对象为了实现RTTI特性的
+也就是说dynamic_cast和typeid这俩运算符是通过type_info对象实现的
+5.然后把Base2的虚函数按声明顺序填入vtbl
+6.为了解决上文提到的
+Base2 *pb2 = new Derived;
+delete pb2;
+这类典型问题
+编译器搜索Base2区域中的被派生类覆盖了的虚函数
+并将其槽位中的函数地址修改为thunk地址
+这样当发生相应的Base2调用时
+事实上会先跳转到thunk码执行 最终如图中的箭头所示
+跳转到之前铺设好的Derived区域的覆盖虚函数
+
+总结一下虚表布局设计思想：
+1.表结构保护了Base1和Base2这些直接基类的vtbl结构
+这样就能保持执行多态操作时的一致性
+按照相应基类中虚函数的声明顺序完成固定偏移就能寻址到想要的虚函数
+2.将派生类覆盖了的虚函数叠加到第一直接基类Base1上面
+符合Derived和Base1内存空间偏移一致的设计惯例
+同时也使得Base1中不需要thunk来完成跳转
+3.非第一直接基类的vtbl区域里被覆盖的虚函数都需要thunk来处理跳转
+以及this指针的重定位
