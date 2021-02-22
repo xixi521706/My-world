@@ -1,0 +1,93 @@
+#include <iostream>
+using namespace std;
+
+class Node{
+public:
+    int val;
+    Node left;
+    Node right;
+}
+
+class soultion{                              //list访问
+public:
+    void presearch(Node root){               //递归的思想：遍历每一个节点如果此时节点为空，则返回，执行到上一个节点。不论是前、中、后序，看是先遍历当层节点还是左右子树还是先访问
+        Node head=root;
+        if(head == nullptr)                  //当前节点结束判断标志
+            return;
+        while(head != nullptr){              //当层节点结束判断标志
+            cout<<head.val<<" ";
+            presearch(head->left);
+            presearch(head->right);
+          }
+    }
+    void insearch(Node root){
+        Node head=root;
+        if(head == nullptr)
+            return;
+        while(head != nullptr){
+            insearch(head->left);
+            cout<<head.val<<" ";
+            insearch(head->right);
+            }
+    }
+    void possearch(Node root){
+    Node head=root;（
+      void presearch(Node root){                          //前序遍历  根->左->右
+      if(root != nullptr){
+          Stack <Node> stack=new Stack<Node>();           //栈模板创建
+          stack.push(root);
+          while(!stack.isempty()){                        //栈中有节点的话需要访问
+             head=stack.pop();                            //栈中最后元素出栈，并访问该节点
+             cout<<head.val<<" ";
+             if(head.right != nullptr)                    //访问出栈元素的左右子树，如果有则入栈。如果没有则访问该节点的右子树
+                stack.push(head.right);
+             if(head.left != nullptr)                     //右子树为空的话返回到上一层根节点（根节点右子树）
+                stack.push(head.left);
+          }
+      }
+      void possearch(Node root){                 //后序遍历常规法 左->右->根
+         Stack <Node> stack=new Stack<Node>();   //栈模板创建
+         Stack <Node> stack2=new Stack<Node>();
+         stack.add(root);
+         while(!stack.isempty()){                //栈中有节点的话需要访问
+             node head=stack.pop();               //栈中最后元素出栈（存放再栈2中）
+             stack2.push(head);                   //第二个栈存放栈1pop出来的节点，最后再依次访问栈2
+             if(head.left != nullptr)            //访问出栈元素的左子树，如果有则入栈。如果没有则访问该节点的右子树
+                 stack.push(head.left);           //栈1存放顺序位根、右、左，则pop出来时栈2节点顺序位
+             if(head.right != nullptr)             //右子树为空的话返回到上一层根节点（根节点右子树）
+                 stack.push(head.right);
+         }
+         while(!stack2.isempty()){
+             cout<<stack.pop.val<<" ";
+      }
+       
+      void possearch(Node head){                                        //后序遍历--炫技算法  左->右->根
+          if(head != nullptr){
+             Stack<Node>stack=new Stack<Node>();
+             Node c=NULL;                                               //指向根节点
+             stack.push(head);
+             while(!stack.isempty()){
+                c=stack.peek();                                         //每次循环的根节点  ,head为上次pop出的节点
+                if(c.left != null && head !=c.left && head != c.right)  //判断条件：根节点(c)左子树不为空，并且head节点与c节点左右子树均无关，此时根节点的左子树入栈
+                    stack.push(c.left);                                 //根节点的左子树均已入栈，此后c指向了最后一个根节点
+                else if(c.right != null && head !=c.right)              //判断条件：根节点(c)的右子树不为空，并且head指向被pop出的根节点的左子树，根节点的右子树入栈
+                    stack.push(c.right);                                //如果c的右子树不为空且head=c.left，则右子树入栈。
+                esle{
+                    cout<<stack.pop().val<<" ";                         //如果上述两个条件均不满足，则说明，根节点的左右子树均已遍历，此时访问根节点
+                    head = c;                                           //此时head指向根节点
+                }
+            }
+         }
+      void insearch(Node head){                             //中序遍历   左->根->右
+         Stack<Node>stack=new Stack<Node>();
+         while(!stack.isempty() || head != nullptr){
+            if(head != nullptr){                            //当前子树节点不为空，入栈
+                stack.push(head);
+                head=head.left;                             //左子树层次入栈，直至为空
+            }          
+            head=stack.pop();                               //左子树为空时出栈即左子树出栈，访问
+            cout<<head.val;
+            head=head.right;                                //head指向右子树重复上先遍历左子树直至为空。如果根节点的右子树为空。
+         }
+      }
+          
