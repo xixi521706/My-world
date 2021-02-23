@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <queue>
+
+struct Node{
+    int val;
+    Node left;
+    Node right;
+}
+
+clas soultion{
+public:
+    int maxwidthnode(Node head){
+       if(head ==NULL)
+          return 0;
+       quene <Node> qu=new queue<Node>();
+       qu.poll(head);
+       Node cur=head;                                 //每次出队列时的当前节点
+       int max=0;                                     //变量更新每次当前节点层结束时，已遍历完的所有层最大节点值
+       Node curend=0;                                 //当前节点层遍历结束标志(与当前节点比判断当前层是否结束)
+       Node nextend=null;                       //why?不能赋值空吗？
+       int curlevelnodes=0;                           //记录当前节点层节点数
+       while(!qu.isempty()){                          //队列结束标志
+          cur=qu.poll;
+          if(qu.left != NULL){
+              qu.put(cur.left);
+              curend=cur.left;
+          }
+          if(qu.right != NULL){
+              qu.put(cur.right);
+              curend=cur.right;
+          }
+          if(cur != curend)
+              curlevelnodes++;
+          else{                                       //当前队列结束时所有层比较完
+              curend=nextend;
+              max=Math.max(max,curlevelnodes);
+              curlevelnodes=1;
+          }
+      }
+      return max;
+}      
+int main(){
+    return 0;
+}
