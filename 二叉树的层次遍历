@@ -1,0 +1,41 @@
+#include <stdio.h>               //层次遍历求出最大的一层节点数，需要用到hash表存每个节点遍历时的键值和节点，需要一个变量。层次遍历设置flag
+                                 //
+struct Node{
+    int val;
+    Node left;
+    Node right;
+}
+
+class soultion{
+    int curnodewindth(Node head){
+        if(&head == nullptr)
+            return 0;
+        Quene <Node> qu=new linklist<>();                              //queue
+        qu.add(head);
+        HushMap<Node,Interger>levelMap=new HushMap<>();                //hashmap
+        levelMap.put(head,1);
+        int max=0;
+        int curlevel=1;
+        int curlevelnodes=0;
+        while(!qu.isempty()){
+            Node cur=qu.pop();
+            int curnodelevel=levelMap.get(cur);
+            if(cur.left != null){                                       //每次出栈时判断下当前节点有无左右子孩子需要加入队列和放入hash表
+                qu.add(cur.left);
+                levelMap.put(cur.left,levelMap.get(cur)+1);             //放入的节点hash表值更新
+            }
+            if(cur.right != null){                                      //每次出栈时判断下当前节点有无左右子孩子需要加入队列和放入hash表
+                qu.add(cur.right);
+                levelMap.put(cur.right,levelMap.get(cur)+1);
+            }
+            if(levelMap.get(cur) ==  curlevel)                          //判断当前节点(出栈)hash表中的层的信息值是否与当前。当相当时开始计算当层节点数
+                curlevelnodes++;                                        
+            else{                                                       //判断当前节点(出栈)hash表中的层的信息值不为当前层的值
+                curlevel++;                                             //当前层自加
+                max=Math.max(max,curlevelnodes);                        //max存放最大节点数与上层节点数较大值
+                curlevelnodes = 1;                                      //说明此节点为下一层节点的开始，下一层节点数从1开始计数
+            }
+        }
+        max=Math.max(max,curlevelnodes);                                //最后一次需要比较最后一层的节点数与max并返回
+ }
+            
