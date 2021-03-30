@@ -1,0 +1,52 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+class Node{
+public:
+    Node(int v=0){
+        val=v;
+        left=NULL;
+        right=NULL;
+    }
+    int val;
+    Node* left;
+    Node* right;
+};
+void preorder(Node* head){        //先序遍历
+    if(head == NULL)
+        return;
+    stack<Node*>sta;
+    sta.push_back(head);
+    Node* pCur=NULL;
+    while(!sta.empty()){
+        pCur=sta.pop();
+        cout<<pCur->val<<" ";
+        if(pCur->right != NULL)
+            sta.push_back(pCur->right);
+        if(pCur->left != NULL)
+            sta.push_back(pCur->left);
+    }    
+}
+void midorder(Node* head){                   //中序遍历
+    stack<Node*>sta;
+    Node* pCur=NULL;
+    Node* pCur1=NULL;
+    sta.push_back(head);
+    while(pCur != NULL){
+        if(pCur->left != NULL)
+           sta.push_back(pCur->left);
+        else{
+            pCur1=sta.pop();
+            cout<<pCur1->val<<" ";
+            pCur=pCur->right;
+        }
+    }
+}
+int main(){
+    Node* head=new Node();
+    preorder(head);
+    midorder(head);
+    
+    return 0;
+}
