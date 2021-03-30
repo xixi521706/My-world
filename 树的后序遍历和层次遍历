@@ -1,0 +1,48 @@
+#include <iostream>
+#include <stack>
+using namesapace std;
+
+class Node{
+public:
+    Node(int v):val(v){}
+    int val;
+    Node* left;
+    Node* right;
+};
+void nextorder1(Node *&head){
+    if(head != NULL){
+       stack<Node*>sta;
+       stack<Node*>sta1;
+       Node* pCur=NULL;
+       sta.push_back(head);
+       while(!sta.empty()){
+          pCur=sta.pop();
+          sta1.push_back(pCur);
+          if(pCur->left != NULL)
+              sta.push_back(pCur->left);
+          if(pCur->right != NULL)
+              sta.push_back(pCur->right);          
+       }
+    }
+}
+void nextorder2(Node *&head){
+    stack<Node*>sta;
+    Node* pCur=head;
+    while(head != NULL){
+       sta.push_back(head);
+       if(pCur->left != NULL){
+          sta.push_back(pCur->left);
+       }
+       else{
+          pCur=pCur->right;
+       }
+       else{
+          
+       }
+    }
+}
+int main(){
+    Node* head=new Node();
+    nextorder(head);
+    return 0;
+}
